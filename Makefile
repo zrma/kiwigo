@@ -1,4 +1,4 @@
-KIWI_VERSION := "v0.10.3"
+KIWI_VERSION := "v0.16.0"
 
 .PHONY: test
 test: ModelGenerator/default.dict

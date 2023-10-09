@@ -9,7 +9,7 @@ import (
 )
 
 func TestKiwiVersion(t *testing.T) {
-	assert.Equal(t, KiwiVersion(), "0.10.3")
+	assert.Equal(t, KiwiVersion(), "0.16.0")
 }
 
 func TestAnalyze(t *testing.T) {
@@ -50,12 +50,12 @@ func TestAnalyze(t *testing.T) {
 					Form:     "시",
 				},
 				{
-					Position: 12,
+					Position: 11,
 					Tag:      POS_EF,
 					Form:     "ᆫ다",
 				},
 			},
-			Score: -38.967132568359375,
+			Score: -34.18842,
 		},
 	}
 
@@ -87,7 +87,15 @@ func TestSplitSentence(t *testing.T) {
 func TestAddWordFail(t *testing.T) {
 	kb := NewBuilder("./ModelGenerator", 1, KIWI_BUILD_INTEGRATE_ALLOMORPH)
 	add := kb.AddWord("아버지가", "SKO", 0)
-	assert.Equal(t, 0, add)
+	assert.Equal(t, -1, add)
+
+	err := KiwiError()
+	assert.Equal(t, "Unknown POSTag : SKO", err)
+
+	KiwiClearError()
+	err = KiwiError()
+	assert.Zero(t, err)
+
 	assert.Equal(t, 0, kb.Close())
 }
 
@@ -132,12 +140,12 @@ func TestAddWord(t *testing.T) {
 					Form:     "시",
 				},
 				{
-					Position: 12,
+					Position: 11,
 					Tag:      "EF",
 					Form:     "ᆫ다",
 				},
 			},
-			Score: -36.959194,
+			Score: -30.410412,
 		},
 	}
 
@@ -191,12 +199,12 @@ func TestLoadDict(t *testing.T) {
 					Form:     "시",
 				},
 				{
-					Position: 12,
+					Position: 11,
 					Tag:      "EF",
 					Form:     "ᆫ다",
 				},
 			},
-			Score: -36.959194,
+			Score: -30.410412,
 		},
 	}
 
@@ -236,7 +244,7 @@ func TestLoadDict2(t *testing.T) {
 					Form:     "들어가신다",
 				},
 			},
-			Score: -13.669565,
+			Score: -12.393219,
 		},
 	}
 
@@ -261,6 +269,12 @@ func TestExtractWord(t *testing.T) {
 			Form:     "안익",
 			Freq:     3,
 			POSScore: -1.92593,
+			Score:    0,
+		},
+		{
+			Form:     "익태",
+			Freq:     4,
+			POSScore: -0.23702252,
 			Score:    0,
 		},
 	}, wordInfos)

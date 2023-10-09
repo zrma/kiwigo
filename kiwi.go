@@ -2,7 +2,10 @@
 package kiwi
 
 /*
-#cgo LDFLAGS: -l kiwi
+#cgo CFLAGS: -I${SRCDIR}/include
+#cgo windows LDFLAGS: -L${SRCDIR}/libs/win_x64
+#cgo darwin LDFLAGS: -L${SRCDIR}/libs/mac_arm64 -Wl,-rpath ${SRCDIR}/libs/mac_arm64
+#cgo linux LDFLAGS: -L${SRCDIR}/libs/linux_x86_64
 #include <stdlib.h>
 #include <string.h>
 #include <stdint.h> // for uintptr_t
@@ -91,7 +94,7 @@ type TokenResult struct {
 
 // Analyze returns the result of the analysis.
 func (k *Kiwi) Analyze(text string, topN int, options AnalyzeOption) ([]TokenResult, error) {
-	kiwiResH := C.kiwi_analyze(k.handler, C.CString(text), C.int(topN), C.int(options))
+	kiwiResH := C.kiwi_analyze(k.handler, C.CString(text), C.int(topN), C.int(options), C.kiwi_morphset_h(nil), C.kiwi_pretokenized_h(nil))
 
 	defer C.kiwi_res_close(kiwiResH)
 
@@ -188,7 +191,7 @@ func (kb *KiwiBuilder) LoadDict(dictPath string) int {
 
 // Build creates kiwi instance with user word etc.
 func (kb *KiwiBuilder) Build() *Kiwi {
-	h := C.kiwi_builder_build(kb.handler)
+	h := C.kiwi_builder_build(kb.handler, C.kiwi_typo_h(nil), C.float(0.0))
 	defer kb.Close()
 	return &Kiwi{
 		handler: h,
